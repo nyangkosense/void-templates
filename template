@@ -1,0 +1,34 @@
+# Template file for 'niri'
+pkgname=niri
+version=0.1.9
+revision=1
+build_style=cargo
+configure_args="--no-default-features --features=default"
+make_build_args="--verbose"
+hostmakedepends="pkg-config"
+makedepends="eudev-libudev-devel libxkbcommon-devel libinput-devel
+ pipewire-devel pango-devel libseat-devel clang
+ libgbm-devel wayland-devel libdrm-devel
+ MesaLib-devel libglvnd-devel xcb-util-devel
+ libxcb-devel xcb-util-wm-devel libdisplay-info-devel"
+depends="xorg-server-xwayland"
+short_desc="Scrollable-tiling Wayland compositor"
+maintainer="Your Name <your.email@example.com>"
+license="GPL-3.0-or-later"
+homepage="https://github.com/YaLTeR/niri"
+changelog="https://github.com/YaLTeR/niri/releases"
+distfiles="https://github.com/YaLTeR/niri/archive/v${version}.tar.gz"
+checksum=70427efcde50a9d262c341befbd4df4e24557afd8311753bf912a4be1bf243a7
+
+post_install() {
+    vinstall resources/niri.desktop 644 usr/share/wayland-sessions
+    vinstall resources/niri-portals.conf 644 usr/share/xdg-desktop-portal
+    vmkdir etc/niri
+    if [ -f resources/default-config.kdl ]; then
+        vcopy resources/default-config.kdl etc/niri/config.kdl
+    elif [ -f config.kdl ]; then
+        vcopy config.kdl etc/niri/config.kdl
+    else
+        msg_error "Cannot find config.kdl file\n"
+    fi
+}
